@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Modules & Interfaces</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Modules & Interfaces</h1>
+
+  <p>Modules in OCaml are useful for organizing code into logical units, while interfaces (<code>sig</code>) define what is exposed outside the module.</p>
+
+  <h2>Simple Module with Signature</h2>
+  <x-ocaml>
+module Example : sig
+  val the_meaning_of_life_the_universe_and_everything : int
+  val subtract_one : int -> int
+end = struct
+  let the_meaning_of_life_the_universe_and_everything = 42
+  let subtract_one x = x - 1
+end
+
+let one_less_than_the_meaning_of_life_etc =
+  Example.subtract_one Example.the_meaning_of_life_the_universe_and_everything
+
+assert (one_less_than_the_meaning_of_life_etc = 41)
+  </x-ocaml>
+
+  <h2>Abstract Type</h2>
+  <p>You can expose a type <code>t</code> without revealing what it actually is:</p>
+  <x-ocaml>
+module Abstract_type_example : sig
+  type t
+  val to_int : t -> int
+  val zero : t
+  val one : t
+  val add : t -> t -> t
+end = struct
+  type t = int
+  let to_int x = x
+  let zero = 0
+  let one = 1
+  let add = ( + )
+end
+
+let two = Abstract_type_example.add Abstract_type_example.one Abstract_type_example.one
+let four = Abstract_type_example.to_int (Abstract_type_example.add two two)
+
+assert (four = 4)
+  </x-ocaml>
+
+  <h2>Your Turn: Complete the Fraction Module Signature</h2>
+  <p>Add the necessary signatures to expose the <code>create</code> and <code>value</code> functions.</p>
+
+  <x-ocaml>
+module Fraction : sig
+  type t
+  (* TODO: Add signatures for create and value *)
+end = struct
+  type t = int * int
+
+  let create ~numerator ~denominator = numerator, denominator
+  let value (numerator, denominator) =
+    Float.of_int numerator /. Float.of_int denominator
+end
+  </x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>
+let%test "Testing Fraction.value..." =
+  Float.( = ) 2.5 (Fraction.value (Fraction.create ~numerator:5 ~denominator:2))
+
+let%test "Testing Fraction.value..." =
+  Float.( = ) 0.4 (Fraction.value (Fraction.create ~numerator:4 ~denominator:10))
+  </x-ocaml>
+
+  <nav>
+    <a href="20-higher-order-functions.html" class="nav-link">← Previous</a>
+    <a href="index.html" class="nav-link">🏠 Index</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>

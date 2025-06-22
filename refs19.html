@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Mutable References</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Mutable References</h1>
+
+  <p>OCaml allows you to create a single mutable value using the <code>ref</code> keyword. This is useful for keeping track of changing state.</p>
+
+  <h2>Example</h2>
+  <x-ocaml>
+let x = ref 0
+let () = x := !x + 1
+  </x-ocaml>
+
+  <p>Use <code>!x</code> to read the value, and <code>x := new_value</code> to update it.</p>
+
+  <h2>Your Turn: min_and_max</h2>
+  <p>Write a function <code>min_and_max</code> that returns a tuple <code>(min, max)</code> of a non-empty list of positive integers.</p>
+
+  <x-ocaml>
+let min_and_max lst =
+  failwith "For you to implement"
+  </x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>
+let%test "Testing min_and_max..." =
+  [%compare.equal: int*int] (min_and_max [5;9;2;4;3]) (2,9)
+
+let%test "Testing min_and_max..." =
+  [%compare.equal: int*int] (min_and_max [11;15;7;34]) (7,34)
+  </x-ocaml>
+
+  <nav>
+    <a href="18-mutable-records.html" class="nav-link">← Previous</a>
+    <a href="20-higher-order-functions.html" class="nav-link">Next →</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>

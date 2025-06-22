@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Option Type</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Options</h1>
+
+  <p>Many languages have a concept of <code>Null</code>. OCaml uses <code>option</code> to express "presence or absence" of data.</p>
+
+  <h2>Defining Option</h2>
+  <x-ocaml>
+type 'a option =
+  | None
+  | Some of 'a
+  </x-ocaml>
+
+  <p>You don’t need to define this in practice — use the standard library’s version.</p>
+
+  <h2>Example</h2>
+  <x-ocaml>
+let what_number_am_i_thinking (my_number : int option) =
+  match my_number with
+  | None        -> "I'm not thinking of any number!"
+  | Some number -> "My number is: " ^ Int.to_string number
+  </x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>let%test _ = String.(=) (what_number_am_i_thinking None) "I'm not thinking of any number!"</x-ocaml>
+  <x-ocaml>let%test _ = String.(=) (what_number_am_i_thinking (Some 7)) "My number is: 7"</x-ocaml>
+
+  <h2>Your Turn: Safe Division</h2>
+  <p>Return <code>None</code> if divisor is zero, otherwise return <code>Some result</code>.</p>
+  <x-ocaml>
+let safe_divide ~dividend ~divisor =
+  failwith "For you to implement"
+  </x-ocaml>
+
+  <x-ocaml>
+let%test "Testing safe_divide..." =
+  match safe_divide ~dividend:3 ~divisor:2 with
+  | Some 1 -> true
+  | _ -> false
+  </x-ocaml>
+
+  <x-ocaml>
+let%test "Testing safe_divide..." =
+  match safe_divide ~dividend:3 ~divisor:0 with
+  | None -> true
+  | _ -> false
+  </x-ocaml>
+
+  <h2>Your Turn: Option Concatenation</h2>
+  <p>If both inputs are <code>Some</code>, return <code>Some (concatenated string)</code>, otherwise return <code>None</code>.</p>
+  <x-ocaml>let option_concatenate string1 string2 = failwith "For you to implement"</x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>
+let%test "Testing option_concatenate..." =
+  match option_concatenate (Some "hello") (Some "world") with
+  | Some "helloworld" -> true
+  | _ -> false
+  </x-ocaml>
+
+  <x-ocaml>
+let%test "Testing option_concatenate..." =
+  match option_concatenate None (Some "world") with
+  | None -> true
+  | _ -> false
+  </x-ocaml>
+
+  <x-ocaml>
+let%test "Testing option_concatenate..." =
+  match option_concatenate (Some "hello") None with
+  | None -> true
+  | _ -> false
+  </x-ocaml>
+
+  <nav>
+    <a href="14-variants.html" class="nav-link">← Previous</a>
+    <a href="16-patterns.html" class="nav-link">Next →</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>

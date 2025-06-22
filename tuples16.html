@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Tuples and Pairs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Tuples and Pairs</h1>
+
+  <h2>Tuples</h2>
+  <p>A tuple is a fixed-size collection of values, potentially of different types.</p>
+  <x-ocaml>
+type int_and_string_and_char = int * string * char
+let example : int_and_string_and_char = 5, "hello", 'A'
+let i, s, c = example
+
+let () =
+  assert (i = 5);
+  assert (String.(=) s "hello");
+  assert (Char.(=) c 'A')
+  </x-ocaml>
+
+  <h2>Working with Coordinates</h2>
+  <x-ocaml>
+type coordinate = int * int
+let add coord1 coord2 = failwith "For you to implement"
+  </x-ocaml>
+
+  <h2>Generalizing with Pairs</h2>
+  <p>We can define a generic pair type:</p>
+  <x-ocaml>
+type 'a pair = 'a * 'a
+
+let int_pair : int pair = 5, 7
+let string_pair : string pair = "foo", "bar"
+let nested_char_pair : char pair pair = ('a', 'b'), ('c', 'd')
+  </x-ocaml>
+
+  <h2>Your Turn</h2>
+  <p>Write generic functions to extract values from a pair:</p>
+  <x-ocaml>
+let first pair = failwith "For you to implement"
+let second pair = failwith "For you to implement"
+  </x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>let%test "Testing add..." = [%compare.equal: int * int] (4, 7) (add (5, 3) (-1, 4))</x-ocaml>
+  <x-ocaml>let%test "Testing first..." = String.(=) "foo" (first ("foo", "bar"))</x-ocaml>
+  <x-ocaml>let%test "Testing second..." = Char.(=) 'b' (second ('a', 'b'))</x-ocaml>
+
+  <nav>
+    <a href="15-options.html" class="nav-link">← Previous</a>
+    <a href="17-matching-patterns.html" class="nav-link">Next →</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>
