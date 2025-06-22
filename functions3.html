@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Functions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Functions</h1>
+
+  <p>We use <code>let</code> to define functions.</p>
+  <p>Definitions take on the form: <code>let FUNCTION_NAME ARG1 ARG2 ... = BODY</code></p>
+
+  <p>Newlines and whitespace are ignored by the compiler, so this is valid too:</p>
+  <x-ocaml>
+let
+add1
+arg
+=
+arg + 1
+  </x-ocaml>
+
+  <p>Here is the normal version:</p>
+  <x-ocaml>let add1 arg = arg + 1</x-ocaml>
+
+  <p>Using <code>^</code> to append strings:</p>
+  <x-ocaml>let string_append x y = x ^ y</x-ocaml>
+
+  <h2>Implement Arithmetic Functions</h2>
+  <x-ocaml>let plus x y = failwith "For you to implement"</x-ocaml>
+  <x-ocaml>let times x y = failwith "For you to implement"</x-ocaml>
+  <x-ocaml>let minus x y = failwith "For you to implement"</x-ocaml>
+  <x-ocaml>let divide x y = failwith "For you to implement"</x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>let%test "Testing plus..." = Int.( = ) 2 (plus 1 1)</x-ocaml>
+  <x-ocaml>let%test "Testing plus..." = Int.( = ) 49 (plus (-1) 50)</x-ocaml>
+  <x-ocaml>let%test "Testing times..." = Int.( = ) 64 (times 8 8)</x-ocaml>
+  <x-ocaml>let%test "Testing times..." = Int.( = ) (-2048) (times (-2) 1024)</x-ocaml>
+  <x-ocaml>let%test "Testing minus..." = Int.( = ) (-4) (minus (-2) 2)</x-ocaml>
+  <x-ocaml>let%test "Testing minus..." = Int.( = ) 1000 (minus 1337 337)</x-ocaml>
+  <x-ocaml>let%test "Testing divide..." = Int.( = ) 512 (divide 1024 2)</x-ocaml>
+  <x-ocaml>let%test "Testing divide..." = Int.( = ) 1010 (divide 31337 31)</x-ocaml>
+
+  <nav>
+    <a href="02-basic-types.html" class="nav-link">← Previous</a>
+    <a href="04-lists.html" class="nav-link">Next →</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>

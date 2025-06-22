@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Pattern Matching</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Pattern Matching</h1>
+
+  <p><code>match ... with</code> lets us compare values to patterns.</p>
+  <x-ocaml>
+let is_superman x =
+  match x with
+  | "Clark Kent" -> true
+  | _ -> false
+  </x-ocaml>
+
+  <p>You can also match on multiple values at once:</p>
+  <x-ocaml>
+let is_same_person x y =
+  match x, y with
+  | "Clark Kent", "Superman"
+  | "Peter Parker", "Spiderman" -> true
+  | _ -> false
+  </x-ocaml>
+
+  <h2>Your Turn</h2>
+  <p>Write a function using pattern matching that returns true if a number is non-zero.</p>
+  <x-ocaml>let non_zero x = failwith "For you to implement"</x-ocaml>
+
+  <h2>Tests for non_zero</h2>
+  <x-ocaml>let%test "Testing non_zero..." = Bool.( = ) false (non_zero 0)</x-ocaml>
+  <x-ocaml>let%test "Testing non_zero..." = Bool.( = ) true (non_zero 500)</x-ocaml>
+  <x-ocaml>let%test "Testing non_zero..." = Bool.( = ) true (non_zero (-400))</x-ocaml>
+
+  <h2>Now Match on Two Values</h2>
+  <p>Write a function that returns true if both inputs are non-zero.</p>
+  <x-ocaml>let both_non_zero x y = failwith "For you to implement"</x-ocaml>
+
+  <h2>Tests for both_non_zero</h2>
+  <x-ocaml>let%test "Testing both_positive..." = Bool.( = ) false (both_non_zero 0 0)</x-ocaml>
+  <x-ocaml>let%test "Testing both_positive..." = Bool.( = ) false (both_non_zero 0 1)</x-ocaml>
+  <x-ocaml>let%test "Testing both_positive..." = Bool.( = ) false (both_non_zero (-20) 0)</x-ocaml>
+  <x-ocaml>let%test "Testing both_positive..." = Bool.( = ) true (both_non_zero 400 (-5))</x-ocaml>
+
+  <nav>
+    <a href="05-higher-order-functions.html" class="nav-link">← Previous</a>
+    <a href="07-options.html" class="nav-link">Next →</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>

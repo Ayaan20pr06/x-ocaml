@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Basic Types</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    blockquote {
+      border-left: 4px solid #ccc;
+      padding-left: 1em;
+      color: #666;
+      margin: 1em 0;
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Basic Types</h1>
+
+  <p>In OCaml there are 6 basic types: <code>int</code>, <code>float</code>, <code>char</code>, <code>string</code>, <code>bool</code>, and <code>unit</code>.</p>
+
+  <p>Try these values:</p>
+  <x-ocaml>let four = 4</x-ocaml>
+  <x-ocaml>let float_four = 4.</x-ocaml>
+
+  <h2>Functions</h2>
+  <p>Define the average of two integers or floats.</p>
+  <x-ocaml>let int_average x y = failwith "For you to implement"</x-ocaml>
+  <x-ocaml>let float_average x y = failwith "For you to implement"</x-ocaml>
+
+  <h2>Strings and Booleans</h2>
+  <x-ocaml>let first_name = "Fred"</x-ocaml>
+  <x-ocaml>let last_name : string = "Flintstone"</x-ocaml>
+  <x-ocaml>let full_name = first_name ^ " " ^ last_name</x-ocaml>
+  <x-ocaml>let a_boolean_false : bool = false</x-ocaml>
+  <x-ocaml>let () = assert (true || a_boolean_false)</x-ocaml>
+
+  <h2>Unit and Print</h2>
+  <x-ocaml>
+let () =
+  Stdio.print_endline "Hi, My name is ";
+  Stdio.print_endline full_name;
+  Stdio.print_endline " and I am 5 years old"
+  </x-ocaml>
+
+  <x-ocaml>
+let () =
+  Stdio.printf "Hi, My name is %s and I am %d years old\\n" full_name 5
+  </x-ocaml>
+
+  <h2>Inline Tests</h2>
+  <x-ocaml>let%test "Testing int_average..." = Int.equal (int_average 5 5) 5</x-ocaml>
+  <x-ocaml>let%test "Testing int_average..." = Int.(=) (int_average 50 100) 75</x-ocaml>
+  <x-ocaml>let%test "Testing float_average..." = Float.(=) (float_average 5. 5.) 5.</x-ocaml>
+  <x-ocaml>let%test "Testing float_average..." = Float.equal (float_average 5. 10.) 7.5</x-ocaml>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>
