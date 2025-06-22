@@ -42,3 +42,6 @@
  (depends
   (ppxlib
    (>= 0.33.0))))
+(lang dune 3.14)
+(name ocaml_notebook)
+(generate_opam_files true)

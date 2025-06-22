@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Hello World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 800px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    h1, h2 {
+      font-weight: 600;
+      color: #111;
+    }
+
+    p, pre {
+      line-height: 1.6;
+    }
+
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+
+    blockquote {
+      border-left: 4px solid #ccc;
+      padding-left: 1em;
+      color: #666;
+      margin: 1em 0;
+      background: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Hello World</h1>
+
+  <blockquote>
+    Welcome to Jane Street's OCaml challenges!
+    This exercise is just meant to familiarize you with the system.
+  </blockquote>
+
+  <p>Write OCaml code using your favorite text editor; if you aren't already committed to one, we recommend Visual Studio Code.</p>
+
+  <p>To compile your code and run inline tests, run:</p>
+  <code>dune runtest</code>
+
+  <p>Try building this code.</p>
+  <p>You should see a compilation error because it's missing the end quote. Add the end quote and re-run. You should see that the code compiled and ran!</p>
+
+  <p>You can also execute code in utop directly. Try pasting this line of code into utop and running it there:</p>
+
+  <x-ocaml>let () = Stdio.printf "Hello, World!"</x-ocaml>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>
