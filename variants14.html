@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OCaml Challenge: Variants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1, h2 { font-weight: 600; color: #111; }
+    p, pre { line-height: 1.6; }
+    code, x-ocaml {
+      font-family: 'Courier New', monospace;
+      background: #f4f4f4;
+      padding: 0.5em;
+      display: block;
+      margin: 1em 0;
+      border-left: 4px solid #ccc;
+      white-space: pre-wrap;
+    }
+    x-ocaml:not(:defined) {
+      display: block;
+      white-space: pre-wrap;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    nav {
+      margin: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+    }
+    a.nav-link {
+      text-decoration: none;
+      color: #007acc;
+      font-weight: 600;
+    }
+    a.nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jane Street OCaml Challenge: Variants</h1>
+
+  <p>Variants are user-defined types that can take on several different labeled forms.</p>
+
+  <h2>Basic Variant Type</h2>
+  <x-ocaml>
+type color =
+  | Red
+  | Green
+  | Blue
+  </x-ocaml>
+
+  <p>Pattern match to convert a color to a string:</p>
+  <x-ocaml>
+let to_string color =
+  match color with
+  | Red -> "red"
+  | Green -> "green"
+  | Blue -> "blue"
+  </x-ocaml>
+
+  <h2>Variants with Data</h2>
+  <p>Constructors can also hold values:</p>
+  <x-ocaml>
+type card_value =
+  | Ace
+  | King
+  | Queen
+  | Jack
+  | Number of int
+
+let one_card_value : card_value = Queen
+let another_card_value : card_value = Number 8
+  </x-ocaml>
+
+  <p>Convert a card to a string:</p>
+  <x-ocaml>
+let card_value_to_string card_value =
+  match card_value with
+  | Ace      -> "Ace"
+  | King     -> "King"
+  | Queen    -> "Queen"
+  | Jack     -> "Jack"
+  | Number i -> Int.to_string i
+  </x-ocaml>
+
+  <h2>Your Turn</h2>
+  <p>Write a function to assign a score to a card: Aces = 11, Face cards = 10, Numbers = value</p>
+  <x-ocaml>
+let card_value_to_score card_value =
+  failwith "For you to implement"
+  </x-ocaml>
+
+  <h2>Tests</h2>
+  <x-ocaml>let%test "Testing card_value_to_score..." = Int.(=) 11 (card_value_to_score Ace)</x-ocaml>
+  <x-ocaml>let%test "Testing card_value_to_score..." = Int.(=) 10 (card_value_to_score King)</x-ocaml>
+  <x-ocaml>let%test "Testing card_value_to_score..." = Int.(=) 10 (card_value_to_score Queen)</x-ocaml>
+  <x-ocaml>let%test "Testing card_value_to_score..." = Int.(=) 10 (card_value_to_score Jack)</x-ocaml>
+  <x-ocaml>let%test "Testing card_value_to_score..." = Int.(=) 5 (card_value_to_score (Number 5))</x-ocaml>
+
+  <nav>
+    <a href="13-labeled-arguments.html" class="nav-link">← Previous</a>
+    <a href="15-options.html" class="nav-link">Next →</a>
+  </nav>
+
+  <script async
+    src="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.js"
+    src-worker="https://cdn.jsdelivr.net/gh/art-w/x-ocaml.js@1/x-ocaml.worker+effects.js"
+    src-load="./js/re_digestif_show.js">
+  </script>
+
+</body>
+</html>
