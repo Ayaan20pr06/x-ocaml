@@ -1,4 +1,5 @@
 open Js_of_ocaml
+open Js_of_ocaml.Js
 module Merlin_worker = Worker
 
 let respond m = Js_of_ocaml.Worker.post_message (X_protocol.resp_to_bytes m)
@@ -15,10 +16,11 @@ let reformat ~id code =
 
 (* ✅ Add this helper function to send stdout/stderr output *)
 let post_io_message kind content =
-  let json = Js_of_ocaml.Js._object [|
-    ("type", Js_of_ocaml.Js.string kind);
-    ("content", Js_of_ocaml.Js.string content)
-  |] in
+  let json = _object [|
+
+   ("type", string kind);
+  ("content", string content)
+|]in
   Js_of_ocaml.Worker.postMessage json
 
 (* ✅ Modify your run function to set up the flushers *)
