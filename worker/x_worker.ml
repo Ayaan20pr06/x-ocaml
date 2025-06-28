@@ -22,16 +22,14 @@ let post_io_message kind content =
   |] in
   Worker.postMessage json
 
-
-let run () =
+let () =
   Sys_js.set_channel_flusher stdout (fun s ->
-    respond (Top_response (0, "[stdout] " ^ s)));
+    Firebug.console##log (Js.string ("[STDOUT FLUSHED]: " ^ s)))
 
+let () =
   Sys_js.set_channel_flusher stderr (fun s ->
-    respond (Top_response (0, "[stderr] " ^ s)));
+    Firebug.console##log (Js.string ("[STDERR FLUSHED]: " ^ s)))
 
-  Js_of_ocaml.Worker.set_onmessage @@ fun marshaled_message ->
-  ...
 
 
   Js_of_ocaml.Worker.set_onmessage @@ fun marshaled_message ->
