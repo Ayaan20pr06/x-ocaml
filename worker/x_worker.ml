@@ -1,3 +1,4 @@
+open Js_of_ocaml
 module Merlin_worker = Worker
 
 let respond m = Js_of_ocaml.Worker.post_message (X_protocol.resp_to_bytes m)
@@ -12,7 +13,20 @@ let reformat ~id code =
   if code <> code' then respond (Formatted_source (id, code'));
   code'
 
+(* ✅ Add this helper function to send stdout/stderr output *)
+let post_io_message kind content =
+  let json = Js_of_ocaml.Js._object [|
+    ("type", Js_of_ocaml.Js.string kind);
+    ("content", Js_of_ocaml.Js.string content)
+  |] in
+  Js_of_ocaml.Worker.postMessage json
+
+(* ✅ Modify your run function to set up the flushers *)
 let run () =
+  (* 👇 Add this block at the top of the run function *)
+  Sys_js.set_channel_flusher stdout (fun s -> post_io_message "stdout" s);
+  Sys_js.set_channel_flusher stderr (fun s -> post_io_message "stderr" s);
+
   Js_of_ocaml.Worker.set_onmessage @@ fun marshaled_message ->
   match X_protocol.req_of_bytes marshaled_message with
   | Merlin (id, action) ->
