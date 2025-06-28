@@ -26,3 +26,4 @@
  (target export-stdlib.txt)
  (action
   (run jsoo_listunits -o %{target} stdlib)))
+)
