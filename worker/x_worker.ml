@@ -1,5 +1,5 @@
 open Js_of_ocaml
-open Js_of_ocaml.Js
+open js
 module Merlin_worker = Worker
 
 let respond m = Js_of_ocaml.Worker.post_message (X_protocol.resp_to_bytes m)
