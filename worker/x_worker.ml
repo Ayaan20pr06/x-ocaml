@@ -17,11 +17,11 @@ let reformat ~id code =
 (* ✅ Add this helper function to send stdout/stderr output *)
 let post_io_message kind content =
   let json = _object [|
+    ("type", string kind);
+    ("content", string content)
+  |] in
+  Worker.postMessage json
 
-   ("type", string kind);
-  ("content", string content)
-|]in
-  Js_of_ocaml.Worker.postMessage json
 
 (* ✅ Modify your run function to set up the flushers *)
 let run () =
