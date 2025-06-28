@@ -23,11 +23,16 @@ let post_io_message kind content =
   Worker.postMessage json
 
 
-(* ✅ Modify your run function to set up the flushers *)
 let run () =
-  (* 👇 Add this block at the top of the run function *)
-  Sys_js.set_channel_flusher stdout (fun s -> post_io_message "stdout" s);
-  Sys_js.set_channel_flusher stderr (fun s -> post_io_message "stderr" s);
+  Sys_js.set_channel_flusher stdout (fun s ->
+    respond (Top_response (0, "[stdout] " ^ s)));
+
+  Sys_js.set_channel_flusher stderr (fun s ->
+    respond (Top_response (0, "[stderr] " ^ s)));
+
+  Js_of_ocaml.Worker.set_onmessage @@ fun marshaled_message ->
+  ...
+
 
   Js_of_ocaml.Worker.set_onmessage @@ fun marshaled_message ->
   match X_protocol.req_of_bytes marshaled_message with
