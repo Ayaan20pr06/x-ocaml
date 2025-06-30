@@ -1,45 +1,46 @@
-open Js_of_ocaml
-open js
-module Merlin_worker = Worker
+(lang dune 3.10)
 
-let respond m = Js_of_ocaml.Worker.post_message (X_protocol.resp_to_bytes m)
+(generate_opam_files true)
 
-let reformat ~id code =
-  let code' =
-    try Ocamlfmt.fmt code
-    with _err ->
-      (* Brr.Console.log [ "ocamlformat error"; Printexc.to_string _err ]; *)
-      code
-  in
-  if code <> code' then respond (Formatted_source (id, code'));
-  code'
+(name x-ocaml)
 
-(* ✅ Add this helper function to send stdout/stderr output *)
-let post_io_message kind content =
-  let json = _object [|
-    ("type", string kind);
-    ("content", string content)
-  |] in
-  Worker.postMessage json
+(source
+ (github art-w/x-ocaml))
 
-let () =
-  Sys_js.set_channel_flusher stdout (fun s ->
-    Firebug.console##log (Js.string ("[STDOUT FLUSHED]: " ^ s)))
+(authors "Arthur Wendling")
 
-let () =
-  Sys_js.set_channel_flusher stderr (fun s ->
-    Firebug.console##log (Js.string ("[STDERR FLUSHED]: " ^ s)))
+(maintainers "art.wendling@gmail.com")
 
+(license MIT)
 
+(package
+ (name x-ocaml)
+ (synopsis "OCaml notebooks as a WebComponent")
+ (depends
+  (bos
+   (>= 0.2.1))
+  (brr
+   (>= 0.0.7))
+  (cmdliner
+   (>= 1.3.0))
+  (js_of_ocaml
+   (>= 6.0.1))
+  (js_of_ocaml-ppx
+   (>= 6.0.1))
+  (js_of_ocaml-toplevel
+   (>= 6.0.1))
+  (merlin-lib
+   (>= 5.2.1-502))
+  (ocamlformat-lib
+   (>= 0.27.0))
+  (ocamlfind
+   (>= 1.9.8))
+  (ppx_blob
+   (>= 0.9.0))))
 
-  Js_of_ocaml.Worker.set_onmessage @@ fun marshaled_message ->
-  match X_protocol.req_of_bytes marshaled_message with
-  | Merlin (id, action) ->
-      respond (Merlin_response (id, Merlin_worker.on_message action))
-  | Format (id, code) -> ignore (reformat ~id code : string)
-  | Eval (id, code) ->
-      let code = reformat ~id code in
-      let output ~loc out = respond (Top_response_at (id, loc, out)) in
-      let result = Eval.execute ~output ~id code in
-      respond (Top_response (id, result))
-  | Setup -> Eval.setup_toplevel ()
+(package
+ (name ppxlib_register)
+ (synopsis "Register PPX for js_of_ocaml-toplevel")
+ (depends
+  (ppxlib
+   (>= 0.33.0))))
