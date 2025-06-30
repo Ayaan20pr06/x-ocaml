@@ -1,5 +1,9 @@
 (vendored_dirs jsoo-code-mirror merlin-js)
 
+(library
+ (name x_ocaml_lib)
+ (libraries irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel))
+
 (rule
  (mode promote)
  (target x-ocaml.js)
