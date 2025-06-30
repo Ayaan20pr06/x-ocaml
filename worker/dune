@@ -8,7 +8,6 @@
   merlin-js.worker
   ocamlformat-lib
   ocamlformat-lib.parser_extended
-  ocamlformat-lib 
   irmin-indexeddb 
   irmin-git
   js_of_ocaml-ppx )
