@@ -2,7 +2,9 @@
 
 (library
  (name x_ocaml_lib)
- (libraries irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel))
+ (libraries irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel ppx_blob)
+ (preprocess
+  (pps ppx_blob)))
 
 (rule
  (mode promote)

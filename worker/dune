@@ -8,7 +8,11 @@
   merlin-js.worker
   ocamlformat-lib
   ocamlformat-lib.parser_extended
-  ocamlformat-lib.format_))
+  ocamlformat-lib 
+  irmin-indexeddb 
+  irmin-git
+  js_of_ocaml-ppx )
+ (modes js))
 
 (rule
  (targets export.txt)
