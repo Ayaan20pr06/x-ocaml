@@ -1,6 +1,8 @@
-(lang dune 3.10)
+(lang dune 3.8)
 
 (generate_opam_files true)
+
+(name x-ocaml)
 
 (source
  (github art-w/x-ocaml))
@@ -34,7 +36,9 @@
   (ocamlfind
    (>= 1.9.8))
   (ppx_blob
-   (>= 0.9.0))))
+   (>= 0.9.0))
+  irmin-indexeddb
+  irmin-git))
 
 (package
  (name ppxlib_register)
