@@ -42,5 +42,4 @@
  (name ppxlib_register)
  (synopsis "Register PPX for js_of_ocaml-toplevel")
  (depends
-  (ppxlib
-   (>= 0.33.0))))
+  (ppxlib)))
