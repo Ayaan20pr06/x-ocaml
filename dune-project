@@ -2,7 +2,7 @@
 
 (generate_opam_files true)
 
-(name x-ocaml)
+(name x_ocaml)
 
 (source
  (github art-w/x-ocaml))

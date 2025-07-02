@@ -2,8 +2,28 @@
 
 (executable
  (name x_ocaml)
- (modules x_ocaml cell client webcomponent)
- (libraries brr code-mirror merlin-js.client merlin-js.code-mirror merlin-js.protocol x_protocol irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel ppx_blob)
+ (modules
+  x_ocaml
+  cell
+  client
+  editor
+  merlin_ext
+  mutation_observer
+  webcomponent)
+ (libraries
+  brr
+  brr.tyxml
+  code-mirror
+  merlin-js.client
+  merlin-js.code-mirror
+  merlin-js.protocol
+  x_protocol
+  irmin-indexeddb
+  irmin-git
+  js_of_ocaml
+  js_of_ocaml-ppx
+  js_of_ocaml-toplevel
+  ppx_blob)
  (preprocess (pps ppx_blob))
  (preprocessor_deps (file style.css))
  (modes byte)
