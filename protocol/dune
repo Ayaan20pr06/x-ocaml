@@ -1,3 +1,5 @@
 (library
  (name x_protocol)
- (libraries merlin-js.protocol))
+ (public_name x-ocaml.x_protocol)
+ (libraries merlin-js)  ; Adjust to the correct local library (e.g., merlin-js or merlin-js.protocol if defined)
+)

@@ -1,13 +1,6 @@
 (vendored_dirs jsoo-code-mirror merlin-js)
 
-(executable
- (name x_ocaml)
- (libraries brr code-mirror merlin-js.client merlin-js.code-mirror x_protocol irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel ppx_blob)
- (preprocess (pps ppx_blob))
- (preprocessor_deps (file style.css))
- (modes byte)
- (js_of_ocaml
-  (flags :standard)))
+
 
 (rule
  (mode promote)
@@ -19,10 +12,10 @@
  (mode promote)
  (target x-ocaml.worker+effects.js)
  (action
-  (copy _build/default/worker/effects/x_worker.bc.js %{target})))
+  (copy _build/default/worker/x_worker.bc.js %{target})))  ; Adjust path if needed
 
 (rule
  (mode promote)
  (target x-ocaml.worker.js)
  (action
-  (copy _build/default/worker/no-effects/x_worker.bc.js %{target})))
+  (copy _build/default/worker/x_worker.bc.js %{target})))  ; Adjust path if needed
