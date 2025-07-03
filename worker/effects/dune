@@ -1,6 +1,10 @@
 (executable
  (name x_worker)
- (libraries ocamlformat-lib irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel x_protocol merlin-js.worker brr)
- (modes byte)
+ (libraries x_worker)
+ (modes js)
  (js_of_ocaml
-  (flags :standard)))
+  (flags
+   --export=%{dep:../export.txt}
+   --toplevel
+   --effects=cps
+   --enable=effects)))

@@ -2,7 +2,7 @@
 
 (generate_opam_files true)
 
-(name x_ocaml)
+(name x-ocaml)
 
 (source
  (github art-w/x-ocaml))
@@ -36,9 +36,7 @@
   (ocamlfind
    (>= 1.9.8))
   (ppx_blob
-   (>= 0.9.0))
-  irmin-indexeddb
-  irmin-git))
+   (>= 0.9.0))))
 
 (package
  (name ppxlib_register)

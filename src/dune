@@ -1,10 +1,13 @@
-(vendored_dirs jsoo-code-mirror merlin-js)
-(library
+(executable
  (name x_ocaml)
- (public_name x-ocaml)
- (modules x_ocaml cell client editor merlin_ext mutation_observer webcomponent)
- (libraries brr brr.tyxml code-mirror merlin-js.client merlin-js.code-mirror merlin-js.protocol x_protocol irmin-indexeddb irmin-git js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel ppx_blob irmin irmin-pack)
- (preprocess (pps ppx_blob))
- (preprocessor_deps (file style.css))
- (modes byte)
- (js_of_ocaml (flags :standard)))
+ (libraries
+  brr
+  code-mirror
+  merlin-js.client
+  merlin-js.code-mirror
+  x_protocol)
+ (modes js)
+ (preprocess
+  (pps ppx_blob))
+ (preprocessor_deps
+  (file style.css)))

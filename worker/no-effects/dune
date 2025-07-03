@@ -1,21 +1,6 @@
 (executable
  (name x_worker)
- (libraries brr js_of_ocaml js_of_ocaml-ppx js_of_ocaml-toplevel x_protocol merlin-js.worker ocamlformat-lib ocamlformat-lib.parser_extended irmin-indexeddb irmin-git)
- (modes byte)
+ (libraries x_worker)
+ (modes js)
  (js_of_ocaml
-  (flags :standard)))
-
-(rule
- (targets export.txt)
- (deps export-stdlib.txt)
- (action
-  (with-stdout-to
-   %{targets}
-   (progn
-    (cat %{deps})
-    (echo "Ast_mapper\n")))))
-
-(rule
- (target export-stdlib.txt)
- (action
-  (run jsoo_listunits -o %{target} stdlib)))
+  (flags --export=%{dep:../export.txt} --toplevel)))
