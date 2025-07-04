@@ -1,4 +1,4 @@
-oopen Bos
+open Bos
 
 let fatal err =
   Format.printf "ERROR: %s@." err;

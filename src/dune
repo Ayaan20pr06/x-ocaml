@@ -5,6 +5,8 @@
   code-mirror
   merlin-js.client
   merlin-js.code-mirror
+  irmin-indexeddb 
+  irmin-git
   x_protocol)
  (modes js)
  (preprocess

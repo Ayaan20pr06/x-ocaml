@@ -1,4 +1,10 @@
 open Brr
+open Brr_io
+open Lwt
+
+(* Reference save_code and restore_code from x_ocaml.ml *)
+external save_code : Store.t -> int -> string -> unit Lwt.t = "save_code"
+external restore_code : Store.t -> int -> string option Lwt.t = "restore_code"
 
 type status = Not_run | Running | Run_ok | Request_run
 
@@ -10,6 +16,7 @@ type t = {
   cm : Editor.t;
   worker : Client.t;
   merlin_worker : Merlin_ext.Client.worker;
+  store : Store.t; (* Added for Irmin store *)
 }
 
 let id t = t.id
@@ -83,14 +90,16 @@ let set_source_from_html editor this =
   invalidate_from ~editor;
   Client.fmt ~id:editor.id editor.worker doc
 
-let init ~id worker this =
+let init ~id ~store worker this =
   let shadow = Webcomponent.attach_shadow this in
 
   El.append_children shadow
-    [ El.style [ El.txt @@ Jstr.of_string [%blob "style.css"] ] ];
-  let run_btn = El.button [ El.txt (Jstr.of_string "Run") ] in
+    [ El.style [ El.txt @@ Jstr.v [%blob "style.css"] ] ];
+  let run_btn = El.button [ El.txt (Jstr.v "Run") ] in
+  let save_btn = El.button [ El.txt (Jstr.v "Save") ] in
+  let restore_btn = El.button [ El.txt (Jstr.v "Restore") ] in
   El.append_children shadow
-    [ El.div ~at:[ At.class' (Jstr.of_string "run_btn") ] [ run_btn ] ];
+    [ El.div ~at:[ At.class' (Jstr.v "run_btn") ] [ run_btn; save_btn; restore_btn ] ];
 
   let cm = Editor.make shadow in
 
@@ -105,21 +114,50 @@ let init ~id worker this =
       next = None;
       worker;
       merlin_worker;
+      store;
     }
   in
   Editor.on_change cm (fun () -> invalidate_after ~editor);
   set_source_from_html editor this;
 
+  (* Restore saved content on initialization *)
+  restore_code store id >>= fun content_opt ->
+  (match content_opt with
+   | Some content ->
+       Editor.set_source editor.cm content;
+       invalidate_from ~editor;
+       Client.fmt ~id:editor.id editor.worker content
+   | None -> Lwt.return_unit) >>= fun () ->
+
+  (* Event listeners for buttons *)
+  let _ : Ev.listener =
+    Ev.listen Ev.click (fun _ev -> run editor) (El.as_target run_btn)
+  in
+  let _ : Ev.listener =
+    Ev.listen Ev.click (fun _ev ->
+      let content = Editor.source editor.cm in
+      save_code store id content
+    ) (El.as_target save_btn)
+  in
+  let _ : Ev.listener =
+    Ev.listen Ev.click (fun _ev ->
+      restore_code store id >>= fun content_opt ->
+      (match content_opt with
+       | Some content ->
+           Editor.set_source editor.cm content;
+           invalidate_from ~editor;
+           Client.fmt ~id:editor.id editor.worker content
+       | None -> ());
+      Lwt.return_unit
+    ) (El.as_target restore_btn)
+  in
+
   Merlin_ext.set_context merlin (fun () -> pre_source editor);
   Editor.configure_merlin cm (Merlin_ext.extensions merlin_worker);
 
-  let () =
+  let _ : Mutation_observer.t =
     Mutation_observer.observe ~target:(Webcomponent.as_target this)
     @@ Mutation_observer.create (fun _ _ -> set_source_from_html editor this)
-  in
-
-  let _ : Ev.listener =
-    Ev.listen Ev.click (fun _ev -> run editor) (El.as_target run_btn)
   in
 
   editor
@@ -136,8 +174,8 @@ let render_message msg =
     | Meta str -> ("meta", str)
   in
   El.pre
-    ~at:[ At.class' (Jstr.of_string ("caml_" ^ kind)) ]
-    [ El.txt (Jstr.of_string text) ]
+    ~at:[ At.class' (Jstr.v ("caml_" ^ kind)) ]
+    [ El.txt (Jstr.v text) ]
 
 let add_message t loc msg =
   Editor.add_message t.cm loc (List.map render_message msg)
