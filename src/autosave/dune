@@ -1,0 +1,24 @@
+(library
+ (public_name x-ocaml.autosave)
+ (name x_ocaml_autosave)
+ (libraries
+  lwt
+  js_of_ocaml
+  js_of_ocaml-lwt
+  yojson
+  indexeddb
+  ppx_yojson_conv_lib
+  ppx_deriving_yojson.runtime)
+ (preprocess
+  (pps
+   js_of_ocaml-ppx
+   lwt_ppx
+   ppx_deriving.show
+   ppx_deriving_yojson))
+ (modes byte)
+ (modules
+  autosave_types
+  autosave_storage
+  autosave_manager
+  autosave_restore
+  integration))
