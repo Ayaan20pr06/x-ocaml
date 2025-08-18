@@ -5,7 +5,8 @@
   code-mirror
   merlin-js.client
   merlin-js.code-mirror
-  x_protocol)
+  x_protocol
+  x-ocaml.autosave)
  (modes js)
  (preprocess
   (pps ppx_blob))
