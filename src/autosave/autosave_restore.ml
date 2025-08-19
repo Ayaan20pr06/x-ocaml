@@ -1,30 +1,30 @@
 open Lwt.Syntax
 open Js_of_ocaml
-open Dom_html  (* Add this for console access *)
+open Dom_html  
 open Autosave_types
 open Autosave_storage
 
-(* Define console binding *)
+(* console binding *)
 let console = Js.Unsafe.global##.console
 
 module AutoRestore = struct
   
-  (* Load document state from storage - returns data only, no DOM manipulation *)
+  (* Loading document state from storage - only data returning, no DOM *)
   let load_document_state storage document_id =
     AutoSave_Storage.load_document storage document_id
   
-  (* Load execution state from storage - returns data only, no DOM manipulation *)
+  
   let load_execution_state storage document_id =
     AutoSave_Storage.load_execution_state storage document_id
   
-  (* Auto-restore session - retrieves data but doesn't apply it *)
+  (* Auto-restore session - takes data but doesn't apply it *)
   let auto_restore_session storage document_id =
     let* doc_result = load_document_state storage document_id in
     let* exec_result = load_execution_state storage document_id in
     
     let doc_state_opt = match doc_result with
       | Ok doc_state -> 
-          (* Fixed: Use ignore to discard return value *)
+          
           ignore (console##log (Js.string (Printf.sprintf "Loaded document state for: %s" document_id)));
           Some doc_state
       | Error Not_found ->
@@ -49,7 +49,7 @@ module AutoRestore = struct
     
     Lwt.return (doc_state_opt, exec_state_opt)
   
-  (* Create and show restore dialog - returns selected document ID *)
+  (* Creating and showing restore dialog - returns selected document ID *)
   let show_restore_dialog storage =
     let* docs_result = AutoSave_Storage.list_documents storage ~limit:20 () in
     match docs_result with
@@ -70,7 +70,7 @@ module AutoRestore = struct
         in
         Lwt.return None
     | Ok docs ->
-        (* Create promise for dialog result *)
+        
         let (result_promise, result_resolver) = Lwt.wait () in
         
         let dialog = Dom_html.createDiv Dom_html.document in
@@ -87,7 +87,7 @@ module AutoRestore = struct
         
         List.iteri (fun i doc ->
           let date_str = 
-            (* Fixed: Convert float to Js.number_t *)
+            
             let date = new%js Js.date_fromTimeValue (Js.number_of_float doc.timestamp) in
             Js.to_string date##toLocaleString in
           
@@ -97,7 +97,7 @@ module AutoRestore = struct
             let preview = if String.length content > max_len then
               String.sub content 0 max_len ^ "..."
             else content in
-            (* Simple HTML escaping *)
+            (* HTML escaping *)
             let escaped = Bytes.of_string preview in
             for j = 0 to Bytes.length escaped - 1 do
               match Bytes.get escaped j with
@@ -128,7 +128,7 @@ module AutoRestore = struct
         Buffer.add_string html_content "</div>";
         dialog##.innerHTML := Js.string (Buffer.contents html_content);
         
-        (* Add dialog styles if not already present *)
+        (* Adding dialog styles *)
         let style_id = "autosave-dialog-styles" in
         if Js.Opt.test (Dom_html.document##getElementById (Js.string style_id)) = false then begin
           let style = Dom_html.createStyle Dom_html.document in
@@ -233,7 +233,7 @@ module AutoRestore = struct
         
         Dom.appendChild Dom_html.document##.body dialog;
         
-        (* Handle close button *)
+        (* close button *)
         let close_btn = dialog##querySelector (Js.string ".close-btn-header") in
         Js.Opt.iter close_btn (fun btn ->
           btn##.onclick := Dom_html.handler (fun _ ->
@@ -243,7 +243,7 @@ module AutoRestore = struct
           )
         );
         
-        (* Handle restore buttons *)
+        (* restore buttons *)
         let restore_btns = dialog##querySelectorAll (Js.string ".restore-btn") in
         for i = 0 to restore_btns##.length - 1 do
           Js.Opt.iter (restore_btns##item i) (fun btn ->
@@ -258,7 +258,7 @@ module AutoRestore = struct
         
         result_promise
   
-  (* List all saved documents *)
+  (* all saved documents *)
   let list_saved_documents storage ?(limit=20) () =
     AutoSave_Storage.list_documents storage ~limit ()
   

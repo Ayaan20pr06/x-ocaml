@@ -2,7 +2,7 @@ open Lwt.Syntax
 open Js_of_ocaml
 open Autosave_types
 
-(* Use the actual indexeddb library structure *)
+
 module IDB = Indexeddb.Idb_lwt
 module Store = Indexeddb.Idb_lwt.Json
 
@@ -20,7 +20,7 @@ module AutoSave_Storage = struct
   let execution_states_store_name = IDB.store_name "execution_states" 
   let session_metadata_store_name = IDB.store_name "session_metadata"
 
-  (* Database schema setup *)
+  (* Database setup *)
   let setup_database ~old_version upgrader =
     if old_version < 1 then begin
       IDB.create_store upgrader documents_store_name 
@@ -34,7 +34,7 @@ module AutoSave_Storage = struct
         ~options:(IDB.store_options ~key_path:"document_id" ());
     end
 
-  (* Initialize storage *)
+  
   let create () : t storage_result =
     try%lwt
       let* db = IDB.make (IDB.db_name database_name) 
@@ -45,7 +45,7 @@ module AutoSave_Storage = struct
     | exn -> 
         Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* Save document - works with document_state *)
+  
   let save_document (storage : t) (doc_state : document_state) : unit storage_result =
     try%lwt
       let store = Store.store storage.db documents_store_name in
@@ -55,7 +55,7 @@ module AutoSave_Storage = struct
     with
     | exn -> Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* Load document - returns document_state *)
+  
   let load_document (storage : t) (doc_id : string) : document_state storage_result =
     try%lwt
       let store = Store.store storage.db documents_store_name in
@@ -69,7 +69,7 @@ module AutoSave_Storage = struct
     with
     | exn -> Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* Save execution state - works with execution_state *)
+  
   let save_execution_state (storage : t) (exec_state : execution_state) : unit storage_result =
     try%lwt
       let store = Store.store storage.db execution_states_store_name in
@@ -79,7 +79,7 @@ module AutoSave_Storage = struct
     with
     | exn -> Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* Load execution state - returns execution_state *)
+  
   let load_execution_state (storage : t) (doc_id : string) : execution_state storage_result =
     try%lwt
       let store = Store.store storage.db execution_states_store_name in
@@ -93,31 +93,31 @@ module AutoSave_Storage = struct
     with
     | exn -> Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* List documents - returns document_state list, never execution_state *)
+  
   let list_documents (storage : t) ?(limit = 50) () : document_state list storage_result =
     try%lwt
       let store = Store.store storage.db documents_store_name in
       let* all_bindings = Store.bindings store in
       
-      (* Convert bindings to document_state list *)
+      
       let document_list : document_state list = List.filter_map (fun (_, json_obj) ->
         match document_state_of_yojson json_obj with
         | Ok (doc : document_state) -> Some doc
         | Error _ -> None
       ) all_bindings in
       
-      (* Sort by timestamp (most recent first) *)
+      
       let sorted_document_list : document_state list = List.sort 
         (fun (a : document_state) (b : document_state) -> 
           Float.compare b.timestamp a.timestamp) document_list in
       
-      (* Take only the requested number *)
+      
       let limited_document_list : document_state list = take limit sorted_document_list in
       Lwt.return (Ok limited_document_list)
     with
     | exn -> Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* Delete document and associated data *)
+  
   let delete_document (storage : t) (doc_id : string) : unit storage_result =
     try%lwt
       let docs_store = Store.store storage.db documents_store_name in
@@ -132,7 +132,7 @@ module AutoSave_Storage = struct
     with
     | exn -> Lwt.return (Error (Database_error (Printexc.to_string exn)))
 
-  (* Cleanup old documents - only deals with document_state *)
+  (* Cleanup old documents *)
   let cleanup_old_documents (storage : t) ?(keep_count = 50) () : unit storage_result =
     let* docs_result = list_documents storage ~limit:(keep_count + 100) () in
     match docs_result with
@@ -141,7 +141,7 @@ module AutoSave_Storage = struct
         if List.length document_list <= keep_count then
           Lwt.return (Ok ())
         else
-          (* Sort by timestamp and keep most recent *)
+          
           let sorted_documents : document_state list = List.sort 
             (fun (a : document_state) (b : document_state) -> 
               Float.compare b.timestamp a.timestamp) document_list in
@@ -161,12 +161,12 @@ module AutoSave_Storage = struct
           if all_successful then Lwt.return (Ok ())
           else Lwt.return (Error (Database_error "Some deletions failed"))
 
-  (* Close database connection *)  
+  (* Closing database connection *)  
   let close (storage : t) : unit =
     IDB.close storage.db
 end
 
-(* Helper functions for List operations *)
+(* Helper functions *)
 let rec take (n : int) (lst : 'a list) : 'a list = 
   match lst with
   | [] -> []

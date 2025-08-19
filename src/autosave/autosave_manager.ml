@@ -178,7 +178,7 @@ module AutoSave_Manager = struct
               selection_start;
               selection_end;
               scroll_top;
-              timestamp = Js.to_float Js.date_now;  (* FIXED: Removed () *)
+              timestamp = Js.to_float (new%js Js.date_now)##getTime;
               version = manager.version_counter;
             }
           with exn ->
@@ -192,7 +192,7 @@ module AutoSave_Manager = struct
         toplevel_state = "";
         repl_history = [];
         execution_count = 0;
-        timestamp = Js.to_float Js.date_now;  (* FIXED: Removed () *)
+        timestamp = Js.to_float (new%js Js.date_now)##getTime;
       }
     else
       match Js.Opt.to_option (x_ocaml_elements##item 0) with
@@ -202,7 +202,7 @@ module AutoSave_Manager = struct
             toplevel_state = "";
             repl_history = [];
             execution_count = 0;
-            timestamp = Js.to_float Js.date_now;  (* FIXED: Removed the invalid new%js Js.date_now *)
+            timestamp = Js.to_float (new%js Js.date_now)##getTime;
           }
       | Some x_ocaml_element ->
           let toplevel_state = try
@@ -222,7 +222,7 @@ module AutoSave_Manager = struct
             toplevel_state;
             repl_history;
             execution_count = List.length repl_history;
-            timestamp = Js.to_float Js.date_now;  (* FIXED: Removed () *)
+            timestamp = Js.to_float (new%js Js.date_now)##getTime;
           }
 
   let string_of_trigger = function
@@ -238,7 +238,7 @@ module AutoSave_Manager = struct
       Lwt.return (Ok ())
     else begin
       manager.save_in_progress <- true;
-      let current_time = Js.to_float Js.date_now in  (* FIXED: Removed () *)
+      let current_time = Js.to_float (new%js Js.date_now)##getTime in
       
       let save_operation =
         try%lwt
