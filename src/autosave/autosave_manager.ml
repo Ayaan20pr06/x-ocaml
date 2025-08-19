@@ -1,5 +1,4 @@
 (* Fixed Autosave_manager.ml with proper js_of_ocaml compatibility *)
-
 open Lwt.Syntax
 open Js_of_ocaml
 open Dom_html  (* Add this for console access *)
@@ -179,7 +178,7 @@ module AutoSave_Manager = struct
               selection_start;
               selection_end;
               scroll_top;
-              timestamp = Js.to_float (Js.date_now ());
+              timestamp = Js.to_float Js.date_now;  (* FIXED: Removed () *)
               version = manager.version_counter;
             }
           with exn ->
@@ -193,7 +192,7 @@ module AutoSave_Manager = struct
         toplevel_state = "";
         repl_history = [];
         execution_count = 0;
-        timestamp = Js.to_float (Js.date_now ());
+        timestamp = Js.to_float Js.date_now;  (* FIXED: Removed () *)
       }
     else
       match Js.Opt.to_option (x_ocaml_elements##item 0) with
@@ -203,7 +202,7 @@ module AutoSave_Manager = struct
             toplevel_state = "";
             repl_history = [];
             execution_count = 0;
-            timestamp = Js.to_float (new%js Js.date_now);
+            timestamp = Js.to_float Js.date_now;  (* FIXED: Removed the invalid new%js Js.date_now *)
           }
       | Some x_ocaml_element ->
           let toplevel_state = try
@@ -223,7 +222,7 @@ module AutoSave_Manager = struct
             toplevel_state;
             repl_history;
             execution_count = List.length repl_history;
-            timestamp = Js.to_float (Js.date_now ());
+            timestamp = Js.to_float Js.date_now;  (* FIXED: Removed () *)
           }
 
   let string_of_trigger = function
@@ -239,7 +238,7 @@ module AutoSave_Manager = struct
       Lwt.return (Ok ())
     else begin
       manager.save_in_progress <- true;
-      let current_time = Js.to_float (Js.date_now ()) in
+      let current_time = Js.to_float Js.date_now in  (* FIXED: Removed () *)
       
       let save_operation =
         try%lwt
@@ -438,7 +437,6 @@ module AutoSave_Manager = struct
     manager.save_timer <- None;
     manager.periodic_timer <- None;
     ()
-
 end
 
 let get_default_config () = default_config
