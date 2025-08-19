@@ -1,11 +1,9 @@
-(* Fixed Autosave_manager.ml with proper js_of_ocaml compatibility *)
 open Lwt.Syntax
 open Js_of_ocaml
-open Dom_html  (* Add this for console access *)
+open Dom_html
 open Autosave_types
 open Autosave_storage
 
-(* Define console binding *)
 let console = Js.Unsafe.global##.console
 
 type save_trigger = 
@@ -54,14 +52,13 @@ module AutoSave_Manager = struct
     config: auto_save_config;
     mutable last_save_time: float;
     mutable has_unsaved_changes: bool;
-    mutable save_timer: Dom_html.timeout_id option;
-    mutable periodic_timer: Dom_html.timeout_id option;
+    mutable save_timer: Dom_html.timeout_id_safe option;
+    mutable periodic_timer: Dom_html.timeout_id_safe option;
     mutable last_content_hash: int;
     mutable last_content_length: int;
     mutable version_counter: int;
     mutable save_in_progress: bool;
     mutable last_error: storage_error option;
-    (* Fixed: Use proper event type *)
     mutable event_listeners: (Dom_html.event Js.t -> bool Js.t) list;
     on_save_success: (unit -> unit) option;
     on_save_error: (storage_error -> unit) option;
@@ -138,7 +135,6 @@ module AutoSave_Manager = struct
             let content = match get_codemirror_instance element with
               | Some cm -> Js.to_string (cm##getValue)
               | None -> 
-                  (* Fixed: Handle optional textContent *)
                   match Js.Opt.to_option element##.textContent with
                   | Some s -> Js.to_string s
                   | None -> ""
@@ -287,7 +283,6 @@ module AutoSave_Manager = struct
                           manager.storage ~keep_count:manager.config.max_versions () in
                         Lwt.return_unit);
                     
-                    (* Fixed: Use Dom_html.console with ignore *)
                     ignore (console##log (Js.string 
                       (Printf.sprintf "Auto-save completed: %s (v%d)" 
                         (string_of_trigger trigger) manager.version_counter)));
@@ -295,7 +290,6 @@ module AutoSave_Manager = struct
                 | Error e, _ | _, Error e ->
                     manager.last_error <- Some e;
                     Option.iter (fun f -> f e) manager.on_save_error;
-                    (* Fixed: Use Dom_html.console with ignore *)
                     ignore (console##error (Js.string 
                       (Printf.sprintf "Auto-save failed: %s" (error_to_string e))));
                     Lwt.return (Error e)
@@ -353,29 +347,32 @@ module AutoSave_Manager = struct
       match Js.Opt.to_option (x_ocaml_elements##item i) with
       | None -> ()
       | Some element ->
+          let dom_element = (Js.Unsafe.coerce element : Dom_html.element Js.t) in
           let change_handler = Dom_html.handler (fun _event ->
             schedule_save manager Content_change;
             Js._false
           ) in
           handlers := change_handler :: !handlers;
-          element##addEventListener (Js.string "input") change_handler Js._false;
-          element##addEventListener (Js.string "change") change_handler Js._false;
+          ignore (Dom_html.addEventListener dom_element (Dom_html.Event.input) change_handler Js._false);
+          ignore (Dom_html.addEventListener dom_element (Dom_html.Event.change) change_handler Js._false);
           
           let custom_change_handler = Dom_html.handler (fun _event ->
             schedule_save manager Content_change;
             Js._false
           ) in
           handlers := custom_change_handler :: !handlers;
-          element##addEventListener (Js.string "x-ocaml-change") custom_change_handler Js._false;
-          element##addEventListener (Js.string "x-ocaml-execute") custom_change_handler Js._false;
+          ignore (Dom.addEventListener dom_element (Dom.Event.make "x-ocaml-change") 
+            custom_change_handler Js._false);
+          ignore (Dom.addEventListener dom_element (Dom.Event.make "x-ocaml-execute") 
+            custom_change_handler Js._false);
           
           if manager.config.save_on_blur then
-            let blur_handler = Dom_html.handler (fun _event ->
+            let blur_handler = Dom_html.handler (fun (_event : Dom_html.focusEvent Js.t) ->
               schedule_save manager Focus_lost;
               Js._false
             ) in
             handlers := blur_handler :: !handlers;
-            element##addEventListener (Js.string "blur") blur_handler Js._false;
+            ignore (Dom_html.addEventListener dom_element (Dom_html.Event.blur) blur_handler Js._false);
     done;
     
     Dom_html.window##.onbeforeunload := Dom_html.handler (fun _event ->
@@ -391,8 +388,8 @@ module AutoSave_Manager = struct
       Js._false
     ) in
     handlers := visibility_handler :: !handlers;
-    Dom_html.document##addEventListener 
-      (Js.string "visibilitychange") visibility_handler Js._false;
+    ignore (Dom_html.addEventListener (Dom_html.document :> Dom_html.eventTarget Js.t) 
+      (Dom.Event.make "visibilitychange") visibility_handler Js._false);
     
     if manager.config.periodic_interval_ms > 0 then
       let timer_id = Dom_html.setInterval
