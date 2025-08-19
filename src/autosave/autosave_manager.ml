@@ -371,7 +371,6 @@ module AutoSave_Manager = struct
               schedule_save manager Focus_lost;
               Js._false
             ) in
-            handlers := blur_handler :: !handlers;
             ignore (Dom_html.addEventListener dom_element (Dom_html.Event.blur) blur_handler Js._false);
     done;
     
@@ -387,9 +386,8 @@ module AutoSave_Manager = struct
         schedule_save manager Focus_lost;
       Js._false
     ) in
-    handlers := visibility_handler :: !handlers;
     ignore (Dom_html.addEventListener (Dom_html.document :> Dom_html.eventTarget Js.t) 
-      (Dom.Event.make "visibilitychange") visibility_handler Js._false);
+      (Dom.Event.make "visibilitychange") (Js.Unsafe.coerce visibility_handler) Js._false);
     
     if manager.config.periodic_interval_ms > 0 then
       let timer_id = Dom_html.setInterval

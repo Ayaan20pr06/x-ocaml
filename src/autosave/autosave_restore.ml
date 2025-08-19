@@ -4,27 +4,21 @@ open Dom_html
 open Autosave_types
 open Autosave_storage
 
-(* console binding *)
 let console = Js.Unsafe.global##.console
 
 module AutoRestore = struct
-  
-  (* Loading document state from storage - only data returning, no DOM *)
   let load_document_state storage document_id =
     AutoSave_Storage.load_document storage document_id
-  
   
   let load_execution_state storage document_id =
     AutoSave_Storage.load_execution_state storage document_id
   
-  (* Auto-restore session - takes data but doesn't apply it *)
   let auto_restore_session storage document_id =
     let* doc_result = load_document_state storage document_id in
     let* exec_result = load_execution_state storage document_id in
     
     let doc_state_opt = match doc_result with
       | Ok doc_state -> 
-          
           ignore (console##log (Js.string (Printf.sprintf "Loaded document state for: %s" document_id)));
           Some doc_state
       | Error Not_found ->
@@ -49,7 +43,6 @@ module AutoRestore = struct
     
     Lwt.return (doc_state_opt, exec_state_opt)
   
-  (* Creating and showing restore dialog - returns selected document ID *)
   let show_restore_dialog storage =
     let* docs_result = AutoSave_Storage.list_documents storage ~limit:20 () in
     match docs_result with
@@ -70,7 +63,6 @@ module AutoRestore = struct
         in
         Lwt.return None
     | Ok docs ->
-        
         let (result_promise, result_resolver) = Lwt.wait () in
         
         let dialog = Dom_html.createDiv Dom_html.document in
@@ -85,19 +77,17 @@ module AutoRestore = struct
           <div class="session-list">
         |};
         
-        List.iteri (fun i doc ->
+        List.iteri (fun i (doc : document_state) ->
           let date_str = 
-            
             let date = new%js Js.date_fromTimeValue (Js.number_of_float doc.timestamp) in
             Js.to_string date##toLocaleString in
           
           let preview_content = 
-            let content = doc.content in (* doc is now correctly typed as document_state *)
+            let content = doc.content in
             let max_len = 100 in
             let preview = if String.length content > max_len then
               String.sub content 0 max_len ^ "..."
             else content in
-            (* HTML escaping *)
             let escaped = Bytes.of_string preview in
             for j = 0 to Bytes.length escaped - 1 do
               match Bytes.get escaped j with
@@ -128,7 +118,6 @@ module AutoRestore = struct
         Buffer.add_string html_content "</div>";
         dialog##.innerHTML := Js.string (Buffer.contents html_content);
         
-        (* Adding dialog styles *)
         let style_id = "autosave-dialog-styles" in
         if Js.Opt.test (Dom_html.document##getElementById (Js.string style_id)) = false then begin
           let style = Dom_html.createStyle Dom_html.document in
@@ -233,7 +222,6 @@ module AutoRestore = struct
         
         Dom.appendChild Dom_html.document##.body dialog;
         
-        (* close button *)
         let close_btn = dialog##querySelector (Js.string ".close-btn-header") in
         Js.Opt.iter close_btn (fun btn ->
           btn##.onclick := Dom_html.handler (fun _ ->
@@ -243,12 +231,13 @@ module AutoRestore = struct
           )
         );
         
-        (* restore buttons *)
         let restore_btns = dialog##querySelectorAll (Js.string ".restore-btn") in
         for i = 0 to restore_btns##.length - 1 do
           Js.Opt.iter (restore_btns##item i) (fun btn ->
             btn##.onclick := Dom_html.handler (fun _ ->
-              let doc_id = Js.to_string (btn##getAttribute (Js.string "data-doc-id") |> Js.Opt.get) in
+              let doc_id = match btn##getAttribute (Js.string "data-doc-id") with
+                | Js.Opt.Val attr -> Js.to_string attr
+                | Js.Opt.Null -> "" in
               Dom.removeChild Dom_html.document##.body dialog;
               Lwt.wakeup result_resolver (Some doc_id);
               Js._false
@@ -258,11 +247,9 @@ module AutoRestore = struct
         
         result_promise
   
-  (* all saved documents *)
   let list_saved_documents storage ?(limit=20) () =
     AutoSave_Storage.list_documents storage ~limit ()
   
-  (* Delete a saved document and its execution state *)
   let delete_saved_session storage document_id =
     let* result = AutoSave_Storage.delete_document storage document_id in
     match result with
@@ -273,7 +260,6 @@ module AutoRestore = struct
         ignore (console##error (Js.string (Printf.sprintf "Failed to delete session %s: %s" document_id (error_to_string e))));
         Lwt.return (Error e)
   
-  (* Clear all saved sessions *)
   let clear_all_sessions storage =
     let* docs_result = list_saved_documents storage ~limit:1000 () in
     match docs_result with
@@ -288,5 +274,4 @@ module AutoRestore = struct
           Lwt.return (Ok ())
         else
           Lwt.return (Error (List.hd errors))
-  
 end
