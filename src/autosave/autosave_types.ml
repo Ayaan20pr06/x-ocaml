@@ -1,5 +1,3 @@
-(* Autosave_types.ml - Data types and serialization for auto-save functionality *)
-
 open Printf
 
 (* Data types for auto-save functionality *)
@@ -39,7 +37,7 @@ type storage_error =
 
 type 'a storage_result = ('a, storage_error) result Lwt.t
 
-(* Migration support for future schema changes *)
+(* Migration support *)
 type schema_version = int [@@deriving yojson, show]
 
 let current_schema_version : schema_version = 1
@@ -59,7 +57,7 @@ type versioned_metadata = {
   metadata_data: session_metadata;
 } [@@deriving yojson, show]
 
-(* Serialization functions using PPX-generated converters *)
+
 let serialize_document (doc : document_state) : string =
   try
     doc |> document_state_to_yojson |> Yojson.Safe.to_string
@@ -81,7 +79,7 @@ let serialize_metadata (meta : session_metadata) : string =
     eprintf "Error serializing metadata: %s\n" (Printexc.to_string exn);
     "{}"
 
-(* Deserialization functions using PPX-generated converters *)
+
 let deserialize_document (json_str : string) : document_state option =
   try
     let json = Yojson.Safe.from_string json_str in
@@ -136,7 +134,7 @@ let deserialize_metadata (json_str : string) : session_metadata option =
       (Printexc.to_string exn);
     None
 
-(* Versioned serialization for future-proofing *)
+
 let serialize_document_versioned (doc : document_state) : string =
   let versioned = { schema_version = current_schema_version; document_data = doc } in
   versioned |> versioned_document_to_yojson |> Yojson.Safe.to_string
@@ -161,7 +159,7 @@ let deserialize_document_versioned (json_str : string) : document_state option =
       (Printexc.to_string exn);
     None
 
-(* Utility functions for creating default states *)
+
 let create_default_document ~id ~content () : document_state =
   {
     id;
@@ -192,7 +190,7 @@ let create_default_metadata ~document_id ~title () : session_metadata =
     auto_save_enabled = true;
   }
 
-(* Validation functions to ensure data integrity *)
+
 let validate_document (doc : document_state) : (unit, string) result =
   if String.length doc.id = 0 then
     Error "Document ID cannot be empty"
@@ -225,7 +223,7 @@ let validate_metadata (meta : session_metadata) : (unit, string) result =
   else
     Ok ()
 
-(* Helper function to convert storage errors to strings *)
+
 let error_to_string = function
   | Database_error msg -> Printf.sprintf "Database error: %s" msg
   | Not_found -> "Not found"
@@ -233,7 +231,7 @@ let error_to_string = function
   | Version_mismatch (expected, actual) -> 
       Printf.sprintf "Version mismatch: expected %d, got %d" expected actual
 
-(* Helper functions for List operations *)
+
 let rec take n = function
   | [] -> []
   | x :: xs when n > 0 -> x :: take (n - 1) xs

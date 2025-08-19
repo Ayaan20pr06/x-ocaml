@@ -1,4 +1,3 @@
-(* src/autosave/integration.ml *)
 open Lwt.Syntax
 open Js_of_ocaml
 open Dom_html  (* Add this for console access *)
@@ -90,30 +89,30 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
       (Digest.to_hex (Digest.string path_str))
       content_hash
 
-  (* Find or create document ID with persistence *)
+  
   let get_or_create_document_id element storage =
-    (* First check for explicit document-id attribute *)
+    
     let get_attr name = element##getAttribute (Js.string name) |> Js.Opt.to_option in
     
     match get_attr "document-id" with
     | Some attr when Js.to_string attr <> "" ->
         Lwt.return (Js.to_string attr)
     | _ ->
-      (* Check for data-block-id for backward compatibility *)
+      
       match get_attr "data-block-id" with
       | Some attr when Js.to_string attr <> "" ->
         Lwt.return (Js.to_string attr)
       | _ ->
-        (* Try to find existing document with matching content/structure *)
+        
         let generated_id = generate_document_id element in
         let* existing = AutoSave_Storage.load_document storage generated_id in
         match existing with
         | Ok _ ->
-          (* Found existing document with this ID *)
+          
           element##setAttribute (Js.string "document-id") (Js.string generated_id);
           Lwt.return generated_id
         | Error _ ->
-          (* No existing document, use generated ID *)
+          
           element##setAttribute (Js.string "document-id") (Js.string generated_id);
           Lwt.return generated_id
 
@@ -121,11 +120,11 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
     let* storage_result = AutoSave_Storage.create () in
     match storage_result with
     | Error e ->
-      (* Fixed: Use Dom_html.console with ignore *)
+      
       ignore (console##error (Js.string "Failed to initialize storage"));
       Lwt.return (Error e)
     | Ok storage ->
-      (* Ensure element has an ID for registry *)
+      
       let element_id =
         if Js.to_string element##.id = "" then
           let new_id = Printf.sprintf "x-ocaml-%d" (Random.int 1000000) in
@@ -160,7 +159,7 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
         status_indicator##.innerHTML := Js.string
           "<span class='status-icon'>●</span><span class='status-text'></span>";
         
-        (* Add styles if not already present *)
+        
         let style_id = "autosave-styles" in
         if Js.Opt.test (Dom_html.document##getElementById (Js.string style_id)) = false then
           let style = Dom_html.createStyle Dom_html.document in
@@ -185,20 +184,20 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
           |});
           Dom.appendChild Dom_html.document##.head style;
         
-        (* Ensure parent has relative positioning *)
+        
         element##.style##.position := Js.string "relative";
         
         Dom.appendChild element status_indicator;
         status_indicator
 
-  (* Update status indicator *)
+  
   let update_status_indicator indicator status text =
     indicator##.className := Js.string ("autosave-status " ^ status);
     Js.Opt.iter (indicator##querySelector (Js.string ".status-text")) (fun text_span ->
       text_span##.textContent := Js.some (Js.string text)
     )
 
-  (* Initialize auto-save for the element *)
+  
   let initialize_autosave autosave_ext =
     (* Check if auto-save is enabled via attribute *)
     let auto_save_attr = autosave_ext.element##getAttribute (Js.string "auto-save") in
@@ -210,7 +209,7 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
     if not auto_save_enabled then
       Lwt.return_unit
     else
-      (* Get configuration from attributes *)
+      
       let get_int_attr name default =
         match Js.Opt.to_option (autosave_ext.element##getAttribute (Js.string name)) with
         | Some attr ->
@@ -236,11 +235,11 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
         save_execution_state = get_bool_attr "save-execution-state" default_config.save_execution_state;
       } in
       
-      (* Create status indicator *)
+      (* Creating status indicator *)
       let status_indicator = create_status_indicator autosave_ext.element in
       update_status_indicator status_indicator "idle" "";
       
-      (* Create auto-save manager *)
+      (* Creating auto-save manager *)
       let manager = AutoSave_Manager.create
         autosave_ext.storage
         autosave_ext.document_id
@@ -265,10 +264,10 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
       
       autosave_ext.manager := Some manager;
       
-      (* Setup event listeners *)
+      
       let _ = AutoSave_Manager.setup_event_listeners manager in
       
-      (* Try to auto-restore previous session *)
+      
       let* restore_result = AutoRestore.auto_restore_session
         autosave_ext.storage
         autosave_ext.document_id
@@ -285,31 +284,31 @@ module XOcaml_AutoSave : XOcaml_AutoSave_Type = struct
       
       Lwt.return_unit
 
-  (* Add manual save method *)
+  
   let save_now autosave_ext =
     match !(autosave_ext.manager) with
     | None -> Lwt.return (Error (Database_error "Auto-save not initialized"))
     | Some manager -> AutoSave_Manager.save_now manager
 
-  (* Add restore dialog method *)
+  
   let show_restore_dialog autosave_ext =
     let* result = AutoRestore.show_restore_dialog autosave_ext.storage in
     match result with
     | Some document_id ->
-        (* Fixed: Use Dom_html.console with ignore *)
+        
         ignore (console##log (Js.string ("Restore selected: " ^ document_id)));
         Lwt.return_unit
     | None ->
         Lwt.return_unit
 
-  (* Cleanup *)
+  
   let destroy autosave_ext =
     (match !(autosave_ext.manager) with
     | None -> ()
     | Some manager -> AutoSave_Manager.destroy manager)
 end
 
-(* JavaScript API for x-ocaml integration *)
+(* JavaScript API *)
 let () =
   Js.export "XOcamlAutoSave" (object%js
     val create = fun element ->
